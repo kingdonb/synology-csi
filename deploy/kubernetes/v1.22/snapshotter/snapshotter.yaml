@@ -64,10 +64,12 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: quay.io/k8scsi/csi-snapshotter:v3.0.3
+          image: k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.1
           args:
-            - --v=5
+            - --v=1
             - --csi-address=$(ADDRESS)
+            - --leader-election
+            - --http-endpoint=:8082
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -75,6 +77,18 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
+          ports:
+            - containerPort: 8083
+              name: snap-port
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz/leader-election
+              port: snap-port
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 20
         - name: csi-plugin
           securityContext:
             privileged: true
@@ -83,7 +97,7 @@ spec:
             allowPrivilegeEscalation: true
           image: cristicalin/synology-csi:v1.0.0
           args:
-            - --nodeid=NotUsed
+            - --nodeid=$(KUBE_NODE_NAME)
             - --endpoint=$(CSI_ENDPOINT)
             - --client-info
             - /etc/synology/client-info.yml
@@ -91,6 +105,11 @@ spec:
           env:
             - name: CSI_ENDPOINT
               value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: socket-dir
