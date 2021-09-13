@@ -153,7 +153,6 @@ spec:
             - --csi-address=$(ADDRESS)
             - --leader-election
             - --enable-capacity
-            - --capacity-ownerref-level=2
             - --http-endpoint=:8080
             - --v=5
           env:
