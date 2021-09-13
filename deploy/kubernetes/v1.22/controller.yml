@@ -46,6 +46,14 @@ rules:
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotcontents"]
     verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  # The following rule should be uncommented for plugins that require secrets
+  # for provisioning.
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
 
 ---
 kind: ClusterRoleBinding
@@ -60,6 +68,54 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: synology-csi-controller-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Provisioner must be able to work with endpoints in current namespace
+# if (and only if) leadership election is enabled
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: synology-csi
+  name: synology-provisioner-cfg
+rules:
+# Only one of the following rules for endpoints or leases is required based on
+# what is set for `--leader-election-type`. Endpoints are deprecated in favor of Leases.
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "watch", "list", "delete", "update", "create"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "watch", "list", "delete", "update", "create"]
+# Permissions for CSIStorageCapacity are only needed enabling the publishing
+# of storage capacity information.
+- apiGroups: ["storage.k8s.io"]
+  resources: ["csistoragecapacities"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+# The GET permissions below are needed for walking up the ownership chain
+# for CSIStorageCapacity. They are sufficient for deployment via
+# StatefulSet (only needs to get Pod) and Deployment (needs to get
+# Pod and then ReplicaSet to find the Deployment).
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get"]
+- apiGroups: ["apps"]
+  resources: ["replicasets"]
+  verbs: ["get"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: synology-csi-provisioner-role-cfg
+  namespace: synology-csi
+subjects:
+  - kind: ServiceAccount
+    name: csi-controller-sa
+    namespace: synology-csi
+roleRef:
+  kind: Role
+  name: synology-provisioner-cfg
   apiGroup: rbac.authorization.k8s.io
 
 ---
@@ -88,10 +144,13 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: quay.io/k8scsi/csi-provisioner:v1.6.0
+          image: quay.io/k8scsi/csi-provisioner:v2.1.2
           args:
             - --timeout=60s
             - --csi-address=$(ADDRESS)
+            - --leader-election
+            - --enable-capacity
+            - --capacity-ownerref-level=2
             - --v=5
           env:
             - name: ADDRESS
@@ -123,7 +182,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: quay.io/k8scsi/csi-resizer:v0.5.0
+          image: quay.io/k8scsi/csi-resizer:v1.1.0
           args:
             - --v=5
             - --csi-address=$(ADDRESS)
