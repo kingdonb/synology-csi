@@ -151,14 +151,35 @@ spec:
             - --leader-election
             - --enable-capacity
             - --capacity-ownerref-level=2
+            - --http-endpoint=:8080
             - --v=5
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           imagePullPolicy: Always
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
+          ports:
+            - containerPort: 8080
+              name: provisioner-endpoint
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz/leader-election
+              port: provisioner-endpoint
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 20
         - name: csi-attacher
           securityContext:
             privileged: true
@@ -169,13 +190,30 @@ spec:
           args:
             - --v=5
             - --csi-address=$(ADDRESS)
+            - --http-endpoint=:8081
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: MY_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           imagePullPolicy: Always
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
+          ports:
+            - containerPort: 8080
+              name: attacher-endpoint
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz/leader-election
+              port: attacher-endpoint
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 20
         - name: csi-resizer
           securityContext:
             privileged: true
@@ -186,6 +224,8 @@ spec:
           args:
             - --v=5
             - --csi-address=$(ADDRESS)
+            - --leader-election
+            - --http-endpoint=:8082
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -193,6 +233,18 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
+          ports:
+            - containerPort: 8082
+              name: resizer-endpoint
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz/leader-election
+              port: resizer-endpoint
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 20
         - name: csi-plugin
           securityContext:
             privileged: true
