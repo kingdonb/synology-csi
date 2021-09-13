@@ -203,7 +203,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
               name: attach-port
               protocol: TCP
           livenessProbe:
