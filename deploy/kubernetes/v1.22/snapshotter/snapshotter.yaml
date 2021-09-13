@@ -14,6 +14,9 @@ rules:
     resources: ["events"]
     verbs: ["list", "watch", "create", "update", "patch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotclasses"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
@@ -22,6 +25,9 @@ rules:
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotcontents/status"]
     verbs: ["update"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
 
 ---
 kind: ClusterRoleBinding
@@ -36,6 +42,32 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: synology-csi-snapshotter-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: synology-csi
+  name: synology-csi-snapshotter-cfg
+rules:
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "watch", "list", "delete", "update", "create"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: synology-csi
+  name: synology-csi-snapshotter-role-cfg
+subjects:
+  - kind: ServiceAccount
+    name: csi-snapshotter-sa
+    namespace: synology-csi
+roleRef:
+  kind: Role
+  name: synology-csi-snapshotter-cfg
   apiGroup: rbac.authorization.k8s.io
 
 ---
