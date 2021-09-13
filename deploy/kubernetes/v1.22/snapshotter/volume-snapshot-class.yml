@@ -4,6 +4,8 @@ metadata:
   name: synology-snapshotclass
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
 driver: csi.san.synology.com
 deletionPolicy: Delete
 # parameters:
