@@ -170,13 +170,13 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
           ports:
             - containerPort: 8080
-              name: provisioner-endpoint
+              name: prov-port
               protocol: TCP
           livenessProbe:
             failureThreshold: 1
             httpGet:
               path: /healthz/leader-election
-              port: provisioner-endpoint
+              port: prov-port
             initialDelaySeconds: 10
             timeoutSeconds: 10
             periodSeconds: 20
@@ -204,13 +204,13 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
           ports:
             - containerPort: 8080
-              name: attacher-endpoint
+              name: attach-port
               protocol: TCP
           livenessProbe:
             failureThreshold: 1
             httpGet:
               path: /healthz/leader-election
-              port: attacher-endpoint
+              port: attach-port
             initialDelaySeconds: 10
             timeoutSeconds: 10
             periodSeconds: 20
@@ -235,13 +235,13 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
           ports:
             - containerPort: 8082
-              name: resizer-endpoint
+              name: resizer-port
               protocol: TCP
           livenessProbe:
             failureThreshold: 1
             httpGet:
               path: /healthz/leader-election
-              port: resizer-endpoint
+              port: resizer-port
             initialDelaySeconds: 10
             timeoutSeconds: 10
             periodSeconds: 20
