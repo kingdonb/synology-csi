@@ -152,9 +152,9 @@ spec:
             - --timeout=60s
             - --csi-address=$(ADDRESS)
             - --leader-election
-            - --enable-capacity
+#            - --enable-capacity
             - --http-endpoint=:8080
-            - --v=5
+            - --v=1
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
