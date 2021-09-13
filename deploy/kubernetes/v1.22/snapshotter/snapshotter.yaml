@@ -69,7 +69,7 @@ spec:
             - --v=1
             - --csi-address=$(ADDRESS)
             - --leader-election
-            - --http-endpoint=:8082
+            - --http-endpoint=:8083
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
