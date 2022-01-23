@@ -1,8 +1,9 @@
 #!/bin/bash
 plugin_name="csi.san.synology.com"
 min_support_minor=19
-max_support_minor=20
-deploy_k8s_version="v1".$min_support_minor
+max_support_minor=23
+#deploy_k8s_version="v1".$min_support_minor
+deploy_k8s_version="v1.23"
 
 SCRIPT_PATH="$(realpath "$0")"
 SOURCE_PATH="$(realpath "$(dirname "${SCRIPT_PATH}")"/../)"
