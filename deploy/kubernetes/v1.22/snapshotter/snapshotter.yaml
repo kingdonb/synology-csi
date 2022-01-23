@@ -127,7 +127,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: cristicalin/synology-csi:v1.0.0
+          image: kingdonb/synology-csi:v1.0.0
           args:
             - --nodeid=$(KUBE_NODE_NAME)
             - --endpoint=$(CSI_ENDPOINT)
