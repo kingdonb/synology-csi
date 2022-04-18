@@ -98,7 +98,7 @@ spec:
             allowPrivilegeEscalation: true
           image: k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.1
           args:
-            - --v=1
+            - --v=5
             - --csi-address=$(ADDRESS)
             - --leader-election
             - --http-endpoint=:8083

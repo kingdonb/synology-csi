@@ -25,6 +25,9 @@ rules:
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: ["storage.k8s.io"]
     resources: ["csinodes"]
     verbs: ["get", "list", "watch"]
@@ -32,11 +35,8 @@ rules:
     resources: ["csinodeinfos"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["storage.k8s.io"]
-    resources: ["volumeattachments"]
+    resources: ["volumeattachments", "volumeattachments/status"]
     verbs: ["get", "list", "watch", "update", "patch"]
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["volumeattachments/status"]
-    verbs: ["patch"]
   - apiGroups: ["storage.k8s.io"]
     resources: ["storageclasses"]
     verbs: ["get", "list", "watch"]
@@ -46,9 +46,6 @@ rules:
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotcontents"]
     verbs: ["get", "list"]
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch"]
   # The following rule should be uncommented for plugins that require secrets
   # for provisioning.
   - apiGroups: [""]
@@ -154,7 +151,7 @@ spec:
             - --leader-election
 #            - --enable-capacity
             - --http-endpoint=:8080
-            - --v=1
+            - --v=5
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -190,7 +187,7 @@ spec:
             allowPrivilegeEscalation: true
           image: gcr.io/k8s-staging-sig-storage/csi-attacher:v3.4.0
           args:
-            - --v=1
+            - --v=5
             - --csi-address=$(ADDRESS)
             - --leader-election
             - --http-endpoint=:8081
@@ -225,7 +222,7 @@ spec:
             allowPrivilegeEscalation: true
           image: gcr.io/k8s-staging-sig-storage/csi-resizer:v1.3.0
           args:
-            - --v=1
+            - --v=5
             - --csi-address=$(ADDRESS)
             - --leader-election
             - --http-endpoint=:8082
@@ -256,7 +253,7 @@ spec:
             allowPrivilegeEscalation: true
           image: cristicalin/synology-csi:v1.0.1
           args:
-            - --nodeid=NotUsed
+            - --nodeid=$(KUBE_NODE_NAME)
             - --endpoint=$(CSI_ENDPOINT)
             - --client-info
             - /etc/synology/client-info.yml
@@ -264,6 +261,11 @@ spec:
           env:
             - name: CSI_ENDPOINT
               value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: socket-dir
