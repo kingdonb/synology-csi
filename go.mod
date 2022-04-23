@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
-	github.com/cenkalti/backoff/v4 v4.1.2
+	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/container-storage-interface/spec v1.5.0
 	github.com/go-logr/logr v1.2.2 // indirect
 	github.com/golang/protobuf v1.5.2
@@ -18,7 +18,7 @@ require (
 	google.golang.org/grpc v1.43.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/klog/v2 v2.40.1 // indirect
-	k8s.io/mount-utils v0.23.2
+	k8s.io/mount-utils v0.23.6
 	k8s.io/utils v0.0.0-20211208161948-7d6a63dca704
 )
 
