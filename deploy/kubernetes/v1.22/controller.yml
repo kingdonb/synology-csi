@@ -254,7 +254,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: kingdonb/synology-csi:v1.0.0
+          image: kingdonb/synology-csi:v1.0.1
           args:
             - --nodeid=NotUsed
             - --endpoint=$(CSI_ENDPOINT)
