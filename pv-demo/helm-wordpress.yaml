@@ -28,3 +28,7 @@ spec:
       enabled: true
       settings:
         rootPassword: YOUR_PASSWORD
+        userDatabase:
+          name: wpdb
+          password: YOUR_PASSWORD
+          user: wordpress
