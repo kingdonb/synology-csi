@@ -21,7 +21,8 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: groundhog2k
-  interval: 1m0s
+  interval: 5m0s
+  timeout: 1m0s
   values:
     mariadb:
       enabled: true
