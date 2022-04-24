@@ -45,7 +45,7 @@ spec:
         tier: mysql
     spec:
       containers:
-      - image: mysql/mysql-server:8.0.28
+      - image: arm64v8/mysql:8.0.28-oracle
         name: mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
