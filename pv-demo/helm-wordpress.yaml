@@ -21,8 +21,14 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: groundhog2k
-  interval: 5m0s
-  timeout: 1m0s
+  interval: 15m0s
+  timeout: 2m30s
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      remediateLastFailure: false
   values:
     storage:
       requestedSize: 10Gi
