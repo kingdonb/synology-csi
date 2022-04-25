@@ -1,0 +1,10 @@
+mariadb:
+  enabled: true
+  allowEmptyRootPassword: false
+  settings:
+    rootPassword: YOUR_PASSWORD
+  userDatabase:
+    name: wordpress
+    user: wordpress
+    password: YOUR_PASSWORD
+

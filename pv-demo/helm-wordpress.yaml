@@ -24,16 +24,11 @@ spec:
   interval: 5m0s
   timeout: 1m0s
   values:
-    externalDatabase:
-      host: wordpress-mariadb
-      name: wpdb
-      user: wordpress
-      password: YOUR_PASSWORD
     mariadb:
       enabled: true
       settings:
         rootPassword: YOUR_PASSWORD
-        userDatabase:
-          name: wpdb
-          password: YOUR_PASSWORD
-          user: wordpress
+      userDatabase:
+        name: wpdb
+        password: YOUR_PASSWORD
+        user: wordpress
