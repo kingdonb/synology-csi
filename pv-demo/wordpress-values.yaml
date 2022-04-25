@@ -1,0 +1,13 @@
+storage:
+  requestedSize: 10Gi
+mariadb:
+  storage:
+    requestedSize: 10Gi
+  enabled: true
+  allowEmptyRootPassword: false
+  settings:
+    rootPassword: YOUR_PASSWORD
+  userDatabase:
+    name: wordpress
+    user: wordpress
+    password: YOUR_PASSWORD
