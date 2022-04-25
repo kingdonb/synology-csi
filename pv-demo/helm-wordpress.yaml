@@ -32,9 +32,11 @@ spec:
   values:
     storage:
       requestedSize: 10Gi
+      persistentVolumeClaimName: wordpress
     mariadb:
       storage:
         requestedSize: 10Gi
+        persistentVolumeClaimName: db-volume-wordpress-mariadb-0
       enabled: true
       allowEmptyRootPassword: false
       settings:
