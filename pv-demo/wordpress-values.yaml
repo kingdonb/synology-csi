@@ -1,4 +1,8 @@
+storage:
+  requestedSize: 10Gi
 mariadb:
+  storage:
+    requestedSize: 10Gi
   enabled: true
   allowEmptyRootPassword: false
   settings:
@@ -7,4 +11,3 @@ mariadb:
     name: wordpress
     user: wordpress
     password: YOUR_PASSWORD
-

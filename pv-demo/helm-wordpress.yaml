@@ -24,11 +24,16 @@ spec:
   interval: 5m0s
   timeout: 1m0s
   values:
+    storage:
+      requestedSize: 10Gi
     mariadb:
+      storage:
+        requestedSize: 10Gi
       enabled: true
+      allowEmptyRootPassword: false
       settings:
         rootPassword: YOUR_PASSWORD
       userDatabase:
-        name: wpdb
-        password: YOUR_PASSWORD
+        name: wordpress
         user: wordpress
+        password: YOUR_PASSWORD
