@@ -63,7 +63,7 @@ spec:
               - path: /
                 pathType: Prefix
                 backend:
-                service:
-                  name: wordpress
-                  port:
-                    number: 80
+                  service:
+                    name: wordpress
+                    port:
+                      number: 80
