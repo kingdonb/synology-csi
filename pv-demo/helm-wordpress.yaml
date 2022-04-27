@@ -49,3 +49,21 @@ spec:
         name: wordpress
         user: wordpress
         password: YOUR_PASSWORD
+  postRenderers:
+  - kustomize:
+      patchesStrategicMerge:
+      - kind: Ingress
+        apiVersion: networking.k8s.io/v1
+        metadata:
+          name: wordpress
+        spec:
+          rules:
+          - http:
+              paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                service:
+                  name: wordpress
+                  port:
+                    number: 80
