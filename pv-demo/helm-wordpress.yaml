@@ -30,6 +30,10 @@ spec:
     remediation:
       remediateLastFailure: false
   values:
+    ingress:
+      enabled: true
+      hosts:
+      - host: ingress.local
     storage:
       requestedSize: 10Gi
       persistentVolumeClaimName: wordpress
